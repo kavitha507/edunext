@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduNest — Student Empowerment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#09090f;--surface:#111118;--surface2:#18181f;--border:#2a2a35;
+  --accent:#7c6aff;--accent2:#00e0c7;--accent3:#ff6b6b;--accent4:#ffc93c;
+  --text:#f0eff8;--muted:#7a7990;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --r:14px;--r-lg:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--bg);}
+.login-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,106,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(124,106,255,.07) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,black 20%,transparent 100%);}
+.login-glow{position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(124,106,255,.18) 0%,transparent 70%);pointer-events:none;}
+.login-box{position:relative;z-index:1;width:100%;max-width:460px;margin:20px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;box-shadow:0 40px 120px rgba(0,0,0,.7);animation:loginSlide .7s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes loginSlide{from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.login-logo{font-family:var(--font-head);font-size:30px;font-weight:800;text-align:center;margin-bottom:6px;}
+.login-logo span{color:var(--accent);}
+.login-tagline{text-align:center;color:var(--muted);font-size:13px;margin-bottom:32px;}
+.login-returning{background:rgba(0,224,199,.07);border:1px solid rgba(0,224,199,.25);border-radius:14px;padding:18px 20px;margin-bottom:24px;display:none;}
+.login-returning-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
+.login-returning-roll{font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text);margin-bottom:12px;}
+.login-returning-name{font-size:14px;color:var(--muted);margin-bottom:16px;}
+.login-continue-btn{width:100%;background:var(--accent2);color:#09090f;padding:13px;border:none;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-bottom:10px;}
+.login-continue-btn:hover{opacity:.85;transform:translateY(-1px);}
+.login-switch-btn{width:100%;background:transparent;color:var(--muted);padding:10px;border:1px solid var(--border);border-radius:10px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s;}
+.login-switch-btn:hover{border-color:var(--accent);color:var(--accent);}
+.login-new-form{}
+.login-label{display:block;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.login-input-wrap{position:relative;margin-bottom:10px;}
+.login-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:14px 48px 14px 18px;border-radius:12px;font-family:var(--font-mono);font-size:15px;letter-spacing:1px;outline:none;transition:border .2s;}
+.login-input:focus{border-color:var(--accent);}
+.login-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;}
+.login-name-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:13px 16px;border-radius:12px;font-family:var(--font-body);font-size:14px;outline:none;transition:border .2s;margin-bottom:10px;}
+.login-name-input:focus{border-color:var(--accent);}
+.login-hint{font-size:11px;color:var(--muted);margin-bottom:18px;padding-left:2px;}
+.login-error{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--accent3);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px;display:none;}
+.login-btn{width:100%;background:var(--accent);color:#fff;padding:15px;border:none;border-radius:12px;font-family:var(--font-head);font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;box-shadow:0 0 40px rgba(124,106,255,.35);margin-top:4px;}
+.login-btn:hover{background:#9484ff;transform:translateY(-2px);}
+.login-divider{display:flex;align-items:center;gap:12px;margin:20px 0 16px;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.login-divider span{font-size:12px;color:var(--muted);}
+.login-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.login-feat{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.login-feat-icon{font-size:20px;margin-bottom:4px;}
+.login-feat-label{font-size:11px;color:var(--muted);font-weight:600;}
+
+/* ── APP ── */
+#app{display:none;}
+#app.visible{display:block;animation:appReveal .6s ease both;}
+@keyframes appReveal{from{opacity:0}to{opacity:1}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:13px 40px;background:rgba(9,9,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:-.5px;}
+.nav-logo span{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-name{font-size:13px;color:var(--muted);}
+.nav-user-badge{background:rgba(124,106,255,.15);border:1px solid rgba(124,106,255,.3);padding:5px 13px;border-radius:99px;font-family:var(--font-mono);font-size:12px;color:var(--accent);font-weight:600;}
+.nav-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 13px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+.nav-logout:hover{border-color:var(--accent3);color:var(--accent3);}
+
+/* ── TAB BAR ── */
+.tab-bar{position:fixed;top:55px;left:0;right:0;z-index:99;display:flex;align-items:center;gap:3px;padding:9px 40px;background:rgba(9,9,15,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{position:relative;display:flex;align-items:center;gap:7px;padding:8px 18px;border-radius:9px;background:transparent;border:1px solid transparent;color:var(--muted);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all .22s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text);background:var(--surface2);}
+.tab-btn.active{color:var(--text);background:var(--surface);border-color:var(--border);}
+.tab-active-line{position:absolute;bottom:-10px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px 2px 0 0;transform:scaleX(0);transition:transform .3s ease;}
+.tab-btn.active .tab-active-line{transform:scaleX(1);}
+
+/* ── PANELS ── */
+.tab-panel{display:none;padding-top:116px;min-height:100vh;}
+.tab-panel.active{display:block;animation:panelIn .3s ease both;}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO ── */
+.hero{min-height:calc(100vh - 116px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px 80px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,106,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(124,106,255,.07) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 100%);}
+.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(124,106,255,.2) 0%,transparent 70%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,106,255,.12);border:1px solid rgba(124,106,255,.3);padding:7px 16px;border-radius:99px;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;margin-bottom:22px;animation:fadeUp .8s ease both;}
+.hero-badge::before{content:'●';font-size:8px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-welcome{background:rgba(0,224,199,.08);border:1px solid rgba(0,224,199,.2);border-radius:12px;padding:11px 22px;margin-bottom:28px;font-size:15px;display:inline-block;animation:fadeUp .85s .05s ease both;}
+.hero-welcome span{color:var(--accent2);font-weight:700;font-family:var(--font-mono);}
+.hero h1{font-family:var(--font-head);font-size:clamp(42px,7vw,80px);font-weight:800;line-height:1.0;letter-spacing:-2px;animation:fadeUp .9s .1s ease both;margin-bottom:20px;}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{max-width:540px;font-size:16px;color:var(--muted);font-weight:300;animation:fadeUp .9s .18s ease both;margin-bottom:36px;line-height:1.7;}
+.hero-modules{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;animation:fadeUp .9s .26s ease both;}
+.module-chip{background:var(--surface);border:1px solid var(--border);padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;color:var(--muted);transition:all .25s;cursor:pointer;display:flex;align-items:center;gap:8px;}
+.module-chip:hover{border-color:var(--accent);color:var(--text);background:rgba(124,106,255,.1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION ── */
+.section{padding:44px 48px 80px;max-width:1300px;margin:0 auto;}
+.section-tag{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-tag::before{content:'';display:block;width:24px;height:2px;background:var(--accent);}
+.section-title{font-family:var(--font-head);font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:12px;}
+.section-sub{font-size:15px;color:var(--muted);max-width:520px;font-weight:300;margin-bottom:40px;}
+
+/* ── FORM COMMONS ── */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;}
+.form-input,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 15px;border-radius:10px;font-family:var(--font-body);font-size:14px;transition:border .2s;outline:none;}
+.form-input:focus,.form-select:focus{border-color:var(--accent2);}
+.form-select option{background:var(--surface);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 15px;border-radius:10px;font-family:var(--font-body);font-size:14px;resize:vertical;min-height:85px;outline:none;transition:border .2s;}
+.form-textarea:focus{border-color:var(--accent3);}
+
+/* ── RESOURCES ── */
+.sem-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.sem-tab{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:8px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s;}
+.sem-tab:hover,.sem-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.subject-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{background:rgba(124,106,255,.2);border-color:var(--accent);color:var(--accent);}
+.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+.resource-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:all .3s;display:flex;flex-direction:column;gap:12px;}
+.resource-card:hover{border-color:rgba(124,106,255,.5);transform:translateY(-3px);box-shadow:0 14px 44px rgba(0,0,0,.4);}
+.resource-card-header{display:flex;align-items:center;justify-content:space-between;}
+.resource-type{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:99px;}
+.type-pdf{background:rgba(255,107,107,.15);color:#ff6b6b;}
+.type-notes{background:rgba(255,201,60,.15);color:#ffc93c;}
+.resource-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.resource-title{font-family:var(--font-head);font-size:15px;font-weight:700;line-height:1.3;}
+.resource-sub{font-size:12px;color:var(--muted);}
+.resource-meta{display:flex;gap:14px;font-size:11px;color:var(--muted);}
+.resource-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.resource-sem{font-size:10px;padding:3px 9px;border-radius:6px;background:var(--surface2);color:var(--muted);font-weight:600;white-space:nowrap;}
+.resource-actions{display:flex;gap:6px;}
+.resource-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:6px 13px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap;}
+.resource-btn.view{border-color:rgba(0,224,199,.4);color:var(--accent2);}
+.resource-btn.view:hover{background:rgba(0,224,199,.15);}
+.resource-btn.dl{border-color:rgba(124,106,255,.4);color:var(--accent);}
+.resource-btn.dl:hover{background:rgba(124,106,255,.15);}
+
+/* ── YT ── */
+.yt-section{margin-top:52px;}
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.yt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;display:block;}
+.yt-card:hover{transform:translateY(-4px);border-color:rgba(255,107,107,.5);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.yt-thumb{width:100%;height:148px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.yt-play{width:46px;height:46px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:transform .2s;position:relative;z-index:1;}
+.yt-card:hover .yt-play{transform:scale(1.12);}
+.yt-thumb-bg{position:absolute;inset:0;opacity:.18;font-size:70px;display:flex;align-items:center;justify-content:center;}
+.yt-info{padding:14px;}
+.yt-title{font-weight:600;font-size:13px;line-height:1.4;margin-bottom:6px;color:var(--text);}
+.yt-meta{font-size:11px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
+.yt-label{font-size:10px;font-weight:700;background:rgba(255,0,0,.15);color:#ff4444;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:6px;}
+
+/* ── RECYCLING ── */
+.recycling-layout{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;}
+.recycle-form-card,.job-form-card,.feedback-form,.upload-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:30px;}
+.recycle-form-card h3,.job-form-card h3,.feedback-form h3,.upload-card h3{font-family:var(--font-head);font-size:19px;font-weight:700;margin-bottom:4px;}
+.recycle-form-card>p,.job-form-card>p,.feedback-form>p,.upload-card>p{color:var(--muted);font-size:13px;margin-bottom:22px;}
+.points-preview{background:rgba(0,224,199,.07);border:1px solid rgba(0,224,199,.2);border-radius:10px;padding:13px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;}
+.points-preview-label{font-size:13px;color:var(--accent2);font-weight:600;}
+.points-preview-val{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent2);}
+.btn-accent2{width:100%;background:var(--accent2);color:#09090f;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+.btn-accent2:hover{opacity:.85;transform:translateY(-1px);}
+.recycling-right{display:flex;flex-direction:column;gap:18px;}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;}
+.stat-val{font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--accent2);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:3px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.chart-card h4{font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:4px;}
+.chart-card p{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.location-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.location-card h4{font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:13px;}
+.location-list{display:flex;flex-direction:column;gap:8px;}
+.location-item{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border-radius:9px;padding:10px 14px;}
+.location-name{font-size:13px;font-weight:600;}
+.location-dist{font-size:11px;color:var(--muted);}
+.location-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(0,224,199,.15);color:var(--accent2);}
+
+/* ── JOBS ── */
+.jobs-layout{display:grid;grid-template-columns:340px 1fr;gap:26px;align-items:start;}
+.btn-accent4{width:100%;background:var(--accent4);color:#09090f;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+.btn-accent4:hover{opacity:.85;transform:translateY(-1px);}
+.jobs-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.job-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .3s;}
+.job-card:hover{border-color:rgba(255,201,60,.4);transform:translateY(-2px);}
+.job-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px;}
+.job-company{display:flex;align-items:center;gap:10px;}
+.job-logo{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.job-title{font-family:var(--font-head);font-size:14px;font-weight:700;}
+.job-company-name{font-size:11px;color:var(--muted);margin-top:1px;}
+.job-pay{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent4);text-align:right;}
+.job-pay-sub{font-size:10px;color:var(--muted);font-family:var(--font-body);}
+.job-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px;}
+.job-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;background:var(--surface2);color:var(--muted);}
+.job-footer{display:flex;align-items:center;justify-content:space-between;}
+.job-location{font-size:12px;color:var(--muted);}
+.job-apply{background:var(--accent4);color:#09090f;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
+.job-apply:hover{opacity:.85;}
+
+/* ── FEEDBACK ── */
+.feedback-layout{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+.btn-accent3{width:100%;background:var(--accent3);color:#fff;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+.btn-accent3:hover{opacity:.85;transform:translateY(-1px);}
+.rating-group{margin-bottom:16px;}
+.rating-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px;}
+.star-row{display:flex;gap:5px;}
+.star{font-size:22px;cursor:pointer;transition:transform .15s;filter:grayscale(1);opacity:.35;}
+.star:hover,.star.active{filter:none;opacity:1;transform:scale(1.15);}
+.radio-group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.radio-opt{display:flex;align-items:center;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;cursor:pointer;transition:all .2s;}
+.radio-opt:hover{border-color:var(--accent3);}
+.radio-opt input{accent-color:var(--accent3);}
+.radio-opt label{font-size:13px;cursor:pointer;}
+.feedback-analytics{display:flex;flex-direction:column;gap:16px;}
+.analytics-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.analytics-card h4{font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:14px;}
+.rating-bar{margin-bottom:10px;}
+.rating-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.rating-bar-track{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.rating-bar-fill{height:100%;border-radius:4px;}
+.teacher-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:9px;padding:10px 12px;margin-bottom:8px;}
+.teacher-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.teacher-name{font-size:13px;font-weight:600;}
+.teacher-subject{font-size:11px;color:var(--muted);}
+.teacher-rating{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent4);}
+
+/* ── PROJECTS ── */
+.projects-layout{display:grid;grid-template-columns:310px 1fr;gap:26px;align-items:start;}
+.upload-zone{border:2px dashed var(--border);border-radius:11px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;}
+.upload-zone:hover{border-color:var(--accent);background:rgba(124,106,255,.04);}
+.upload-icon{font-size:28px;margin-bottom:8px;}
+.upload-text{font-size:13px;font-weight:600;margin-bottom:3px;}
+.upload-sub{font-size:11px;color:var(--muted);}
+.tech-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.tech-tag{background:rgba(124,106,255,.1);border:1px solid rgba(124,106,255,.22);color:var(--accent);padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tech-tag:hover,.tech-tag.selected{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-primary-solid{width:100%;background:var(--accent);color:#fff;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all .2s;}
+.btn-primary-solid:hover{background:#9484ff;transform:translateY(-1px);}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px;}
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .3s;display:flex;flex-direction:column;gap:11px;}
+.project-card:hover{border-color:rgba(124,106,255,.5);transform:translateY(-3px);box-shadow:0 14px 44px rgba(0,0,0,.4);}
+.project-header{display:flex;align-items:flex-start;justify-content:space-between;}
+.project-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.project-views{font-size:11px;color:var(--muted);}
+.project-title{font-family:var(--font-head);font-size:14px;font-weight:700;line-height:1.3;}
+.project-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.project-tech{display:flex;gap:5px;flex-wrap:wrap;}
+.project-tech-tag{font-size:10px;padding:3px 8px;border-radius:5px;font-weight:600;background:var(--surface2);color:var(--muted);}
+.project-footer{display:flex;align-items:center;justify-content:space-between;}
+.project-author{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);}
+.project-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.project-actions{display:flex;gap:6px;}
+.project-btn{font-size:11px;font-weight:600;cursor:pointer;border:1px solid;padding:5px 10px;border-radius:6px;transition:all .2s;background:transparent;text-decoration:none;}
+.project-btn.view-btn{color:var(--accent2);border-color:rgba(0,224,199,.35);}
+.project-btn.view-btn:hover{background:rgba(0,224,199,.12);}
+.project-btn.dl-btn{color:var(--accent);border-color:rgba(124,106,255,.35);}
+.project-btn.dl-btn:hover{background:rgba(124,106,255,.12);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;transform:translateY(20px);transition:transform .25s;position:relative;}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-close{position:absolute;top:18px;right:18px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{border-color:var(--accent3);color:var(--accent3);}
+.modal-tag{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.modal-title{font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:6px;}
+.modal-meta{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:20px;flex-wrap:wrap;}
+.modal-section-head{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px;}
+.modal-topic{background:var(--surface2);border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:13px;line-height:1.6;}
+.modal-topic b{color:var(--text);font-weight:600;}
+.modal-actions{display:flex;gap:10px;margin-top:22px;}
+.modal-btn{flex:1;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all .2s;font-family:var(--font-body);}
+.modal-btn.primary{background:var(--accent);color:#fff;}
+.modal-btn.primary:hover{background:#9484ff;}
+.modal-btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.modal-btn.secondary:hover{border-color:var(--accent);}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:44px 48px 26px;}
+.footer-inner{max-width:1300px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:36px;}
+.footer-brand-logo{font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:10px;}
+.footer-brand-logo span{color:var(--accent);}
+.footer-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:230px;}
+.footer-col h5{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:13px;}
+.footer-col a{display:block;color:var(--muted);text-decoration:none;font-size:13px;margin-bottom:9px;transition:color .2s;}
+.footer-col a:hover{color:var(--text);}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-size:13px;color:var(--muted);}
+.footer-dti{font-family:var(--font-mono);font-size:11px;color:var(--muted);background:var(--surface2);padding:5px 12px;border-radius:6px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:26px;right:26px;z-index:10000;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;display:flex;align-items:center;gap:11px;box-shadow:0 8px 40px rgba(0,0,0,.6);transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);max-width:330px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{font-size:20px;}
+.toast-title{font-weight:700;margin-bottom:1px;font-size:13px;}
+.toast-sub{color:var(--muted);font-size:11px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){.recycling-layout,.feedback-layout,.jobs-layout,.projects-layout{grid-template-columns:1fr;}.footer-top{grid-template-columns:1fr 1fr;}.jobs-list{grid-template-columns:1fr;}}
+@media(max-width:768px){nav{padding:12px 16px;}.nav-name{display:none;}.tab-bar{padding:8px 12px;}.tab-btn .tab-label{display:none;}.tab-btn{padding:8px 13px;}.section{padding:28px 16px 56px;}.stats-row{grid-template-columns:1fr 1fr;}.footer-top{grid-template-columns:1fr;}footer{padding:36px 16px 22px;}.form-row{grid-template-columns:1fr;}.login-box{padding:32px 22px;}}
+</style>
+</head>
+<body>
+
+<!-- ════ LOGIN ════ -->
+<div id="login-screen">
+  <div class="login-bg-grid"></div>
+  <div class="login-glow"></div>
+  <div class="login-box">
+    <div class="login-logo">Edu<span>Nest</span></div>
+    <div class="login-tagline">B.Tech CSE Student Empowerment Platform</div>
+
+    <!-- Returning user block (shown if saved) -->
+    <div class="login-returning" id="returning-block">
+      <div class="login-returning-title">👋 Welcome Back!</div>
+      <div class="login-returning-roll" id="returning-roll">—</div>
+      <div class="login-returning-name" id="returning-name">—</div>
+      <button class="login-continue-btn" onclick="continueSession()">Continue as this Student →</button>
+      <button class="login-switch-btn" onclick="showNewForm()">Use a different Roll Number</button>
+    </div>
+
+    <!-- New login form -->
+    <div class="login-new-form" id="new-form">
+      <label class="login-label">Roll Number</label>
+      <div class="login-input-wrap">
+        <input class="login-input" id="roll-input" type="text" placeholder="Enter any roll number…" maxlength="20"
+          oninput="this.value=this.value.toUpperCase()"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+        <div class="login-input-icon">🎓</div>
+      </div>
+      <div class="login-hint">ℹ Any college roll number — e.g. 21CSE0047, 22IT0012, RA2111003010001</div>
+
+      <label class="login-label" style="margin-top:14px">Your Name</label>
+      <input class="login-name-input" id="name-input" type="text" placeholder="Enter your full name…"
+        onkeydown="if(event.key==='Enter')doLogin()"/>
+
+      <div class="login-error" id="login-error">⚠ Please enter both your roll number and name.</div>
+      <button class="login-btn" onclick="doLogin()">Enter Platform →</button>
+    </div>
+
+    <div class="login-divider"><span>Platform Modules</span></div>
+    <div class="login-features">
+      <div class="login-feat"><div class="login-feat-icon">📚</div><div class="login-feat-label">Study Resources</div></div>
+      <div class="login-feat"><div class="login-feat-icon">♻️</div><div class="login-feat-label">Paper Recycling</div></div>
+      <div class="login-feat"><div class="login-feat-icon">💼</div><div class="login-feat-label">Part-Time Jobs</div></div>
+      <div class="login-feat"><div class="login-feat-icon">🚀</div><div class="login-feat-label">Mini Projects</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div id="app">
+  <nav>
+    <a href="#" class="nav-logo">Edu<span>Nest</span></a>
+    <div class="nav-right">
+      <span class="nav-name" id="nav-name">—</span>
+      <div class="nav-user-badge" id="nav-roll-badge">—</div>
+      <button class="nav-logout" onclick="doLogout()">← Logout</button>
+    </div>
+  </nav>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('home',this)"><span>🏠</span><span class="tab-label">Home</span><div class="tab-active-line"></div></button>
+    <button class="tab-btn" onclick="switchTab('resources',this)"><span>📚</span><span class="tab-label">Study Resources</span><div class="tab-active-line"></div></button>
+    <button class="tab-btn" onclick="switchTab('recycling',this)"><span>♻️</span><span class="tab-label">Recycling</span><div class="tab-active-line"></div></button>
+    <button class="tab-btn" onclick="switchTab('jobs',this)"><span>💼</span><span class="tab-label">Job Portal</span><div class="tab-active-line"></div></button>
+    <button class="tab-btn" onclick="switchTab('feedback',this)"><span>⭐</span><span class="tab-label">Feedback</span><div class="tab-active-line"></div></button>
+    <button class="tab-btn" onclick="switchTab('projects',this)"><span>🚀</span><span class="tab-label">Projects</span><div class="tab-active-line"></div></button>
+  </div>
+
+  <!-- HOME -->
+  <div class="tab-panel active" id="panel-home">
+    <div class="hero">
+      <div class="hero-grid"></div><div class="hero-glow"></div>
+      <div class="hero-badge"><span>●</span> DTI Problem Statement — B.Tech CSE</div>
+      <div class="hero-welcome">Welcome, <span id="welcome-name">Student</span> &nbsp;|&nbsp; <span id="welcome-roll">—</span></div>
+      <h1>Study Smart.<br/>Earn More.<br/><em>Grow Together.</em></h1>
+      <p class="hero-sub">One platform for B.Tech CSE students — study materials, recycling income, part-time jobs, teacher feedback, and project sharing.</p>
+      <div class="hero-modules">
+        <div class="module-chip" onclick="switchTabByIndex(1)">📚 Study Resources</div>
+        <div class="module-chip" onclick="switchTabByIndex(2)">♻️ Paper Recycling</div>
+        <div class="module-chip" onclick="switchTabByIndex(3)">💼 Job Portal</div>
+        <div class="module-chip" onclick="switchTabByIndex(4)">⭐ Teacher Feedback</div>
+        <div class="module-chip" onclick="switchTabByIndex(5)">🚀 Mini Projects</div>
+      </div>
+    </div>
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div><div class="footer-brand-logo">Edu<span>Nest</span></div><p class="footer-desc">Bridging academic, financial, and social gaps for B.Tech CSE students.</p></div>
+          <div class="footer-col"><h5>Platform</h5><a href="#" onclick="switchTabByIndex(1);return false">Study Resources</a><a href="#" onclick="switchTabByIndex(2);return false">Paper Recycling</a><a href="#" onclick="switchTabByIndex(3);return false">Job Portal</a><a href="#" onclick="switchTabByIndex(4);return false">Feedback</a><a href="#" onclick="switchTabByIndex(5);return false">Projects</a></div>
+          <div class="footer-col"><h5>Support</h5><a href="#">Help Center</a><a href="#">Contact Us</a><a href="#">Privacy Policy</a></div>
+          <div class="footer-col"><h5>Connect</h5><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">GitHub</a></div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-copy">© 2025 EduNest. Built for B.Tech Students.</div>
+          <div class="footer-dti">DTI Problem Statement — Design Thinking & Innovation</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- STUDY RESOURCES -->
+  <div class="tab-panel" id="panel-resources">
+    <div class="section">
+      <div class="section-tag">Module 01</div>
+      <h2 class="section-title">Study Resources & Video Lectures</h2>
+      <p class="section-sub">All B.Tech CSE subjects — Sem 1 to 8. PDFs, notes, and curated YouTube playlists. Click any card to open.</p>
+      <div class="sem-tabs" id="sem-tabs">
+        <button class="sem-tab active" onclick="filterSem('all',this)">All Sems</button>
+        <button class="sem-tab" onclick="filterSem('1',this)">Sem 1</button>
+        <button class="sem-tab" onclick="filterSem('2',this)">Sem 2</button>
+        <button class="sem-tab" onclick="filterSem('3',this)">Sem 3</button>
+        <button class="sem-tab" onclick="filterSem('4',this)">Sem 4</button>
+        <button class="sem-tab" onclick="filterSem('5',this)">Sem 5</button>
+        <button class="sem-tab" onclick="filterSem('6',this)">Sem 6</button>
+        <button class="sem-tab" onclick="filterSem('7',this)">Sem 7</button>
+        <button class="sem-tab" onclick="filterSem('8',this)">Sem 8</button>
+      </div>
+      <div class="subject-filter">
+        <button class="filter-btn active" onclick="filterType('all',this)">All Types</button>
+        <button class="filter-btn" onclick="filterType('pdf',this)">📄 PDF Notes</button>
+        <button class="filter-btn" onclick="filterType('notes',this)">📝 Short Notes</button>
+      </div>
+      <div class="resources-grid" id="resources-grid"></div>
+
+      <div class="yt-section">
+        <h3 style="font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:8px">🎬 YouTube Concept Playlists — Click to Watch</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:22px">Handpicked YouTube playlists. Click any card to open the video directly.</p>
+        <div class="yt-grid" id="yt-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECYCLING -->
+  <div class="tab-panel" id="panel-recycling">
+    <div class="section">
+      <div class="section-tag">Module 02</div>
+      <h2 class="section-title">Paper Recycling & Earn Points</h2>
+      <p class="section-sub">Turn used notes and textbooks into real rewards. Log kilograms and track daily impact.</p>
+      <div class="recycling-layout">
+        <div class="recycle-form-card">
+          <h3>♻️ Log Recyclable Paper</h3>
+          <p>Enter weight and your nearest collection point to earn green points.</p>
+          <div class="form-group"><label class="form-label">Student Name</label><input class="form-input" id="r-name" type="text" readonly/></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Roll Number</label><input class="form-input" id="r-roll" type="text" readonly/></div>
+            <div class="form-group"><label class="form-label">Paper Type</label>
+              <select class="form-select"><option>Used Notebooks</option><option>Old Textbooks</option><option>Printed Sheets</option><option>Mixed Paper</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Weight (kg)</label><input class="form-input" id="r-kg" type="number" placeholder="e.g. 3.5" min="0.5" max="50" step="0.5" oninput="updatePoints()"/></div>
+          <div class="form-group"><label class="form-label">Collection Point</label>
+            <select class="form-select"><option>Main Campus — Block A Gate</option><option>Hostel Block — East Wing</option><option>Library Exit — Ground Floor</option><option>Canteen — Rear Entrance</option><option>Sports Ground — Parking Area</option></select>
+          </div>
+          <div class="points-preview">
+            <div><div class="points-preview-label">🌿 Points You'll Earn</div><div style="font-size:11px;color:var(--muted);margin-top:2px">10 pts per kg</div></div>
+            <div class="points-preview-val" id="pts-preview">0 pts</div>
+          </div>
+          <button class="btn-accent2" onclick="submitRecycling()">Submit Recycling Entry</button>
+        </div>
+        <div class="recycling-right">
+          <div class="stats-row">
+            <div class="stat-card"><div class="stat-val" id="total-kg">0 kg</div><div class="stat-label">Recycled Today</div></div>
+            <div class="stat-card"><div class="stat-val" id="total-pts">0</div><div class="stat-label">Points Today</div></div>
+            <div class="stat-card"><div class="stat-val">127</div><div class="stat-label">Participants</div></div>
+            <div class="stat-card"><div class="stat-val">842 kg</div><div class="stat-label">This Month</div></div>
+          </div>
+          <div class="chart-card">
+            <h4>📈 Daily Recycling Trend — This Week</h4>
+            <p>Campus-wide kg of paper recycled per day</p>
+            <canvas id="recycleChart" height="190"></canvas>
+          </div>
+          <div class="location-card">
+            <h4>📍 Collection Points</h4>
+            <div class="location-list">
+              <div class="location-item"><div><div class="location-name">Main Campus — Block A</div><div class="location-dist">0.2 km away</div></div><span class="location-status">Open</span></div>
+              <div class="location-item"><div><div class="location-name">Hostel Block — East Wing</div><div class="location-dist">0.5 km away</div></div><span class="location-status">Open</span></div>
+              <div class="location-item"><div><div class="location-name">Library Exit</div><div class="location-dist">0.3 km away</div></div><span class="location-status">Open</span></div>
+              <div class="location-item"><div><div class="location-name">Sports Ground Parking</div><div class="location-dist">0.8 km away</div></div><span class="location-status" style="background:rgba(255,107,107,.15);color:var(--accent3)">Full</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOBS -->
+  <div class="tab-panel" id="panel-jobs">
+    <div class="section">
+      <div class="section-tag">Module 03</div>
+      <h2 class="section-title">Student Job Portal</h2>
+      <p class="section-sub">Verified part-time jobs for B.Tech students — earn per hour, nearby locations.</p>
+      <div class="jobs-layout">
+        <div class="job-form-card">
+          <h3>💼 Your Job Profile</h3>
+          <p>Details auto-filled. Choose your category and find matches.</p>
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="j-name" type="text" readonly/></div>
+          <div class="form-group"><label class="form-label">Roll Number</label><input class="form-input" id="j-roll" type="text" readonly/></div>
+          <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" id="j-email" type="email" placeholder="student@college.edu"/></div>
+          <div class="form-group"><label class="form-label">Contact Number</label><input class="form-input" id="j-phone" type="tel" placeholder="+91 98765 43210"/></div>
+          <div class="form-group"><label class="form-label">Job Category</label>
+            <select class="form-select">
+              <option>All Categories</option><option>Content Writing</option><option>Data Entry</option><option>Tutoring / Teaching</option>
+              <option>Graphic Design</option><option>Delivery Services</option><option>Customer Support</option>
+              <option>Coding / Development</option><option>Campus Ambassador</option><option>Photography</option><option>Social Media Management</option>
+            </select>
+          </div>
+          <button class="btn-accent4" onclick="submitJobReg()">Find Matching Jobs →</button>
+        </div>
+        <div class="jobs-list" id="jobs-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="tab-panel" id="panel-feedback">
+    <div class="section">
+      <div class="section-tag">Module 04</div>
+      <h2 class="section-title">Teacher Feedback & College Reviews</h2>
+      <p class="section-sub">Rate teaching quality honestly. Your anonymous voice shapes better education.</p>
+      <div class="feedback-layout">
+        <div class="feedback-form">
+          <h3>⭐ Submit Your Feedback</h3>
+          <p>Anonymous, secure, and directly impactful.</p>
+          <div class="form-group"><label class="form-label">Select Teacher</label>
+            <select class="form-select"><option>Dr. A. Kumar — Data Structures</option><option>Prof. B. Sharma — DBMS</option><option>Dr. C. Patel — OS</option><option>Prof. D. Rao — Networks</option><option>Dr. E. Nair — Algorithms</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Subject</label>
+            <select class="form-select"><option>Data Structures & Algorithms</option><option>Database Management Systems</option><option>Operating Systems</option><option>Computer Networks</option><option>Software Engineering</option></select>
+          </div>
+          <div class="rating-group"><div class="rating-label">Teaching Clarity</div>
+            <div class="star-row" id="stars-clarity"><span class="star" onclick="setRating('clarity',1)">★</span><span class="star" onclick="setRating('clarity',2)">★</span><span class="star" onclick="setRating('clarity',3)">★</span><span class="star" onclick="setRating('clarity',4)">★</span><span class="star" onclick="setRating('clarity',5)">★</span></div>
+          </div>
+          <div class="rating-group"><div class="rating-label">Student Engagement</div>
+            <div class="star-row" id="stars-engagement"><span class="star" onclick="setRating('engagement',1)">★</span><span class="star" onclick="setRating('engagement',2)">★</span><span class="star" onclick="setRating('engagement',3)">★</span><span class="star" onclick="setRating('engagement',4)">★</span><span class="star" onclick="setRating('engagement',5)">★</span></div>
+          </div>
+          <div class="form-group"><label class="form-label">Teaching Style Preferred</label>
+            <div class="radio-group">
+              <div class="radio-opt"><input type="radio" name="style" id="s1"/><label for="s1">Interactive / Discussion-based</label></div>
+              <div class="radio-opt"><input type="radio" name="style" id="s2"/><label for="s2">Traditional Lecture</label></div>
+              <div class="radio-opt"><input type="radio" name="style" id="s3"/><label for="s3">Project & Practical-based</label></div>
+              <div class="radio-opt"><input type="radio" name="style" id="s4"/><label for="s4">Flipped Classroom</label></div>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Comments</label><textarea class="form-textarea" placeholder="Share your honest thoughts..."></textarea></div>
+          <button class="btn-accent3" onclick="submitFeedback()">Submit Anonymously</button>
+        </div>
+        <div class="feedback-analytics">
+          <div class="analytics-card">
+            <h4>📊 Department Ratings</h4>
+            <div class="rating-bar"><div class="rating-bar-label"><span>Teaching Clarity</span><span>4.2/5</span></div><div class="rating-bar-track"><div class="rating-bar-fill" style="width:84%;background:linear-gradient(90deg,var(--accent3),#ff9f40)"></div></div></div>
+            <div class="rating-bar"><div class="rating-bar-label"><span>Student Engagement</span><span>3.8/5</span></div><div class="rating-bar-track"><div class="rating-bar-fill" style="width:76%;background:linear-gradient(90deg,var(--accent3),#ff9f40)"></div></div></div>
+            <div class="rating-bar"><div class="rating-bar-label"><span>Course Material</span><span>4.5/5</span></div><div class="rating-bar-track"><div class="rating-bar-fill" style="width:90%;background:linear-gradient(90deg,var(--accent3),#ff9f40)"></div></div></div>
+            <div class="rating-bar"><div class="rating-bar-label"><span>Exam Preparation</span><span>3.6/5</span></div><div class="rating-bar-track"><div class="rating-bar-fill" style="width:72%;background:linear-gradient(90deg,var(--accent3),#ff9f40)"></div></div></div>
+            <div class="rating-bar"><div class="rating-bar-label"><span>Doubt Resolution</span><span>4.0/5</span></div><div class="rating-bar-track"><div class="rating-bar-fill" style="width:80%;background:linear-gradient(90deg,var(--accent3),#ff9f40)"></div></div></div>
+          </div>
+          <div class="analytics-card">
+            <h4>👨‍🏫 Top-Rated Teachers</h4>
+            <div class="teacher-row"><div class="teacher-avatar" style="background:rgba(124,106,255,.2);color:var(--accent)">AK</div><div><div class="teacher-name">Dr. A. Kumar</div><div class="teacher-subject">Data Structures</div></div><div class="teacher-rating">★ 4.8</div></div>
+            <div class="teacher-row"><div class="teacher-avatar" style="background:rgba(0,224,199,.2);color:var(--accent2)">EN</div><div><div class="teacher-name">Dr. E. Nair</div><div class="teacher-subject">Algorithms</div></div><div class="teacher-rating">★ 4.6</div></div>
+            <div class="teacher-row"><div class="teacher-avatar" style="background:rgba(255,107,107,.2);color:var(--accent3)">DR</div><div><div class="teacher-name">Prof. D. Rao</div><div class="teacher-subject">Networks</div></div><div class="teacher-rating">★ 4.3</div></div>
+            <div class="teacher-row"><div class="teacher-avatar" style="background:rgba(255,201,60,.2);color:var(--accent4)">BS</div><div><div class="teacher-name">Prof. B. Sharma</div><div class="teacher-subject">DBMS</div></div><div class="teacher-rating">★ 4.1</div></div>
+          </div>
+          <div class="analytics-card"><h4>📈 Feedback Trend</h4><canvas id="feedbackChart" height="150"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="tab-panel" id="panel-projects">
+    <div class="section">
+      <div class="section-tag">Module 05</div>
+      <h2 class="section-title">Mini Project Repository</h2>
+      <p class="section-sub">Upload your projects. Inspire juniors. Click View to open a project on GitHub.</p>
+      <div class="projects-layout">
+        <div class="upload-card">
+          <h3>🚀 Upload Your Project</h3>
+          <p>Share your work and help future B.Tech students.</p>
+          <div class="form-group"><label class="form-label">Project Title</label><input class="form-input" id="p-title" type="text" placeholder="e.g. Smart Attendance System"/></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Department</label><select class="form-select"><option>CSE</option><option>IT</option><option>ECE</option><option>EEE</option><option>MECH</option></select></div>
+            <div class="form-group"><label class="form-label">Semester</label><select class="form-select"><option>Sem 3</option><option>Sem 4</option><option>Sem 5</option><option>Sem 6</option><option>Sem 7</option><option>Sem 8</option></select></div>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" style="min-height:70px" placeholder="Brief project description..."></textarea></div>
+          <div class="form-group"><label class="form-label">GitHub Link</label><input class="form-input" id="p-github" type="url" placeholder="https://github.com/yourname/project"/></div>
+          <div class="form-group"><label class="form-label">Tech Stack</label>
+            <div class="tech-tags">
+              <span class="tech-tag" onclick="this.classList.toggle('selected')">Python</span><span class="tech-tag" onclick="this.classList.toggle('selected')">React</span>
+              <span class="tech-tag" onclick="this.classList.toggle('selected')">Node.js</span><span class="tech-tag" onclick="this.classList.toggle('selected')">MySQL</span>
+              <span class="tech-tag" onclick="this.classList.toggle('selected')">Flask</span><span class="tech-tag" onclick="this.classList.toggle('selected')">TensorFlow</span>
+              <span class="tech-tag" onclick="this.classList.toggle('selected')">Arduino</span><span class="tech-tag" onclick="this.classList.toggle('selected')">MongoDB</span>
+              <span class="tech-tag" onclick="this.classList.toggle('selected')">Java</span><span class="tech-tag" onclick="this.classList.toggle('selected')">HTML/CSS</span>
+            </div>
+          </div>
+          <div class="upload-zone" onclick="showToast('📁','Upload Ready','Attach ZIP / PDF / PPT from your device.')">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Drop files or click to upload</div>
+            <div class="upload-sub">ZIP, PDF, PPT up to 50MB</div>
+          </div>
+          <button class="btn-primary-solid" onclick="submitProject()">Upload Project →</button>
+        </div>
+        <div class="projects-grid" id="projects-grid"></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /#app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOnBg(event)">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon">✅</div>
+  <div><div class="toast-title" id="toast-title">Done!</div><div class="toast-sub" id="toast-sub"></div></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// DATA — ALL CSE SUBJECTS SEM 1–8
+// ════════════════════════════════════════════
+const subjects = [
+  // SEM 1
+  {sem:'1',title:'Engineering Mathematics I',sub:'Calculus, Matrices, Diff Equations',type:'pdf',icon:'📐',bg:'rgba(124,106,255,.18)',pages:'148 pg',dl:'3.2k',
+   topics:['Differential Calculus: Limits, Continuity, Taylor Series','Integral Calculus: Definite, Indefinite, Beta-Gamma','Matrices: Eigen Values, Cayley-Hamilton, Diagonalization','Vector Calculus: Gradient, Divergence, Curl','Differential Equations: First Order, Bernoulli, Linear ODE'],
+   pdfUrl:'https://www.nptel.ac.in/content/storage2/courses/122108009/pdf/Lec01.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=WUvTyaaNkzM'},
+  {sem:'1',title:'Engineering Physics',sub:'Wave Optics, Lasers, Quantum Mechanics',type:'pdf',icon:'⚛️',bg:'rgba(0,224,199,.18)',pages:'162 pg',dl:'2.8k',
+   topics:['Wave Optics: Interference, Diffraction, Polarization','Lasers: Construction, Working, Types, Applications','Quantum Mechanics: Wave-Particle Duality, Schrodinger Equation','Semiconductors: Energy Bands, p-n Junctions','Superconductivity & Nanomaterials'],
+   pdfUrl:'https://www.vssut.ac.in/lecture_notes/lecture1424354741.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  {sem:'1',title:'Engineering Chemistry',sub:'Electrochemistry, Polymers, Spectroscopy',type:'notes',icon:'🧪',bg:'rgba(255,107,107,.18)',pages:'96 pg',dl:'2.1k',
+   topics:['Electrochemistry: Galvanic Cells, Nernst Equation, Batteries','Water Treatment: Hardness, Softening, Municipal Treatment','Polymers: Types, Synthesis, Rubber, Plastics','Corrosion: Types, Mechanisms, Prevention','Spectroscopy: UV-Vis, IR, NMR Basics'],
+   pdfUrl:'https://www.vssut.ac.in/lecture_notes/lecture1424354741.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  {sem:'1',title:'Problem Solving & C Programming',sub:'Fundamentals of C language',type:'pdf',icon:'💻',bg:'rgba(255,201,60,.18)',pages:'184 pg',dl:'4.6k',
+   topics:['Problem Solving: Algorithms, Flowcharts','C Basics: Data Types, Operators, I/O','Control Structures: if-else, loops, switch','Functions, Recursion, Storage Classes','Arrays, Strings, Pointers, Structures, File Handling'],
+   pdfUrl:'https://www.tutorialspoint.com/cprogramming/cprogramming_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=KJgsSFOSQv0'},
+  // SEM 2
+  {sem:'2',title:'Engineering Mathematics II',sub:'3D Geometry, Transforms, PDE',type:'pdf',icon:'📊',bg:'rgba(124,106,255,.18)',pages:'156 pg',dl:'3.0k',
+   topics:['3D Geometry: Planes, Lines, Spheres','Laplace Transforms: Properties, Applications, Inverse','Fourier Series: Half Range, Parseval\'s Theorem','Partial Differential Equations: Formation, Solutions','Z-Transforms: Properties, Inverse, Applications'],
+   pdfUrl:'https://www.nptel.ac.in/content/storage2/courses/111108098/pdf/Numerical_Methods_Note.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=WUvTyaaNkzM'},
+  {sem:'2',title:'Digital Principles & Computer Organization',sub:'Number systems, Logic gates, CPU',type:'pdf',icon:'🔌',bg:'rgba(0,224,199,.18)',pages:'172 pg',dl:'3.8k',
+   topics:['Number Systems: Binary, Octal, Hex, BCD Conversions','Boolean Algebra: Laws, K-Map, Minimization','Combinational Circuits: Adders, Subtractors, Mux, Encoder','Sequential Circuits: Flip-Flops, Registers, Counters','Computer Organization: CPU, Memory, I/O, Addressing Modes'],
+   pdfUrl:'https://www.tutorialspoint.com/computer_logical_organization/computer_logical_organization_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=M0mx8S05v60'},
+  {sem:'2',title:'Object Oriented Programming (Java)',sub:'OOP concepts, Java fundamentals',type:'pdf',icon:'☕',bg:'rgba(255,107,107,.18)',pages:'202 pg',dl:'4.2k',
+   topics:['OOP Concepts: Encapsulation, Inheritance, Polymorphism, Abstraction','Java Basics: Data Types, Operators, Control Statements','Classes, Objects, Constructors, this keyword','Exception Handling, Interfaces, Packages','Multithreading, Collections Framework, Java I/O'],
+   pdfUrl:'https://www.tutorialspoint.com/java/java_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=eIrMbAQSU34'},
+  {sem:'2',title:'Basic Electrical & Electronics Engineering',sub:'Circuits, Electronics devices',type:'notes',icon:'⚡',bg:'rgba(255,201,60,.18)',pages:'118 pg',dl:'2.4k',
+   topics:['DC Circuits: KVL, KCL, Mesh & Node Analysis','AC Circuits: Phasors, Resonance, Power Factor','Transformers: Types, Efficiency, EMF Equation','Electronic Devices: Diode, BJT, FET Characteristics','Amplifiers, Rectifiers, Voltage Regulators'],
+   pdfUrl:'https://www.vssut.ac.in/lecture_notes/lecture1424354741.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  // SEM 3
+  {sem:'3',title:'Data Structures & Algorithms',sub:'Arrays, Trees, Graphs, Sorting',type:'pdf',icon:'🧮',bg:'rgba(124,106,255,.18)',pages:'224 pg',dl:'5.1k',
+   topics:['Linear DS: Arrays, Linked List (Singly, Doubly, Circular)','Stacks & Queues: Array/Linked implementation, Applications','Trees: Binary Tree, BST, AVL, Heap, B-Trees','Graphs: BFS, DFS, Dijkstra, Bellman-Ford, Floyd-Warshall','Sorting: Bubble, Insertion, Selection, Merge, Quick, Heap Sort'],
+   pdfUrl:'https://www.tutorialspoint.com/data_structures_algorithms/data_structures_algorithms_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=RBSGKlAvoiM'},
+  {sem:'3',title:'Discrete Mathematics',sub:'Logic, Set Theory, Graph Theory',type:'pdf',icon:'🔢',bg:'rgba(0,224,199,.18)',pages:'168 pg',dl:'3.4k',
+   topics:['Propositional & Predicate Logic: Inference Rules','Set Theory: Relations, Functions, Equivalence','Combinatorics: Permutations, Combinations, Pigeonhole Principle','Graph Theory: Trees, Connectivity, Euler/Hamilton Paths','Algebraic Structures: Groups, Rings, Fields, Lattices'],
+   pdfUrl:'https://faculty.ksu.edu.sa/sites/default/files/rosen_discrete_mathematics_and_its_applications_7th_edition.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=tyDKR4FG3Yw'},
+  {sem:'3',title:'Computer Architecture',sub:'Processor design, Memory, Pipelining',type:'pdf',icon:'🖥️',bg:'rgba(255,201,60,.18)',pages:'188 pg',dl:'3.2k',
+   topics:['Instruction Set Architecture: RISC vs CISC, Addressing Modes','Pipelining: Stages, Hazards (Data/Control/Structural), Solutions','Memory Hierarchy: Cache (Direct/Associative), Virtual Memory','I/O Organization: DMA, Interrupt-Driven, Programmed I/O','Multiprocessors: Shared Memory, Message Passing, Interconnects'],
+   pdfUrl:'https://www.tutorialspoint.com/computer_fundamentals/computer_fundamentals_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=mXdgmSdaXkg'},
+  {sem:'3',title:'Probability & Statistics',sub:'Random variables, Distributions, Testing',type:'notes',icon:'📈',bg:'rgba(255,107,107,.18)',pages:'134 pg',dl:'2.9k',
+   topics:['Probability: Axiomatic, Conditional, Bayes Theorem','Random Variables: Discrete & Continuous, Expectation, Variance','Distributions: Binomial, Poisson, Normal, Exponential','Sampling: Central Limit Theorem, Confidence Intervals','Hypothesis Testing: t-test, Chi-Square, ANOVA, Regression'],
+   pdfUrl:'https://www.nptel.ac.in/content/storage2/courses/111104079/pdf/Lec_1.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=xxpc-HPKN28'},
+  // SEM 4
+  {sem:'4',title:'Database Management Systems',sub:'SQL, ER Model, Normalization, Transactions',type:'pdf',icon:'🗄️',bg:'rgba(0,224,199,.18)',pages:'196 pg',dl:'4.8k',
+   topics:['ER Model: Entities, Relationships, Weak Entities, Specialization','Relational Model: Keys, Relational Algebra, Tuple Calculus','SQL: DDL, DML, DCL, Joins, Subqueries, Views, Triggers','Normalization: 1NF, 2NF, 3NF, BCNF, 4NF, 5NF','Transactions: ACID, Concurrency Control, Two-Phase Locking, Recovery'],
+   pdfUrl:'https://www.tutorialspoint.com/dbms/dbms_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=ztHopE5Wnpc'},
+  {sem:'4',title:'Operating Systems',sub:'Process, Memory, File, I/O Management',type:'pdf',icon:'⚙️',bg:'rgba(124,106,255,.18)',pages:'214 pg',dl:'4.5k',
+   topics:['Process Management: States, PCB, Scheduling (FCFS, SJF, Round Robin, Priority)','Synchronization: Critical Section, Semaphores, Monitors, Deadlock','Memory Management: Paging, Segmentation, Virtual Memory, Page Replacement','File Systems: FAT, NTFS, Inode, Directory Structure','I/O Subsystems: Device Drivers, Disk Scheduling (SCAN, SSTF, LOOK)'],
+   pdfUrl:'https://www.tutorialspoint.com/operating_system/operating_system_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=vBURTt97EkA'},
+  {sem:'4',title:'Design & Analysis of Algorithms',sub:'Complexity, Divide & Conquer, DP, Greedy',type:'pdf',icon:'🔍',bg:'rgba(255,107,107,.18)',pages:'198 pg',dl:'3.9k',
+   topics:['Complexity: Big-O, Omega, Theta, Amortized Analysis','Divide & Conquer: Merge Sort, Quick Sort, Binary Search, Strassen\'s','Greedy: Activity Selection, Fractional Knapsack, Huffman, Prim\'s, Kruskal\'s','Dynamic Programming: 0/1 Knapsack, LCS, Matrix Chain, Floyd-Warshall','NP-Completeness: P vs NP, Reduction, Cook\'s Theorem, Approximation Algorithms'],
+   pdfUrl:'https://www.tutorialspoint.com/design_and_analysis_of_algorithms/design_and_analysis_of_algorithms_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=8hly31xKli0'},
+  {sem:'4',title:'Web Technologies',sub:'HTML, CSS, JavaScript, PHP, Node.js',type:'notes',icon:'🌐',bg:'rgba(255,201,60,.18)',pages:'176 pg',dl:'4.1k',
+   topics:['HTML5: Semantic Tags, Forms, Multimedia, Canvas, SVG','CSS3: Flexbox, Grid, Animations, Responsive Design, Bootstrap','JavaScript: DOM, Events, ES6+, Fetch API, Promises, Async/Await','PHP: Syntax, MySQL Integration, Sessions, File Handling','Node.js & Express: REST APIs, Middleware, MongoDB with Mongoose'],
+   pdfUrl:'https://www.tutorialspoint.com/web_development/web_development_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=ysEN5RaKOlA'},
+  // SEM 5
+  {sem:'5',title:'Computer Networks',sub:'OSI, TCP/IP, Routing, Security',type:'pdf',icon:'🌍',bg:'rgba(0,224,199,.18)',pages:'232 pg',dl:'4.3k',
+   topics:['OSI Model: All 7 Layers, Functions, Protocols at each Layer','Data Link: Error Detection/Correction, Sliding Window, HDLC, Ethernet','Network Layer: IP Addressing, Subnetting, CIDR, Routing (RIP, OSPF, BGP)','Transport Layer: TCP vs UDP, Flow Control, Congestion Control, 3-Way Handshake','Application Layer: HTTP, FTP, DNS, SMTP, DHCP, SNMP, TLS/SSL'],
+   pdfUrl:'https://www.tutorialspoint.com/data_communication_computer_network/data_communication_computer_network_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=IPvYjXCsTg8'},
+  {sem:'5',title:'Compiler Design',sub:'Lexical Analysis, Parsing, Code Generation',type:'pdf',icon:'🔧',bg:'rgba(255,107,107,.18)',pages:'178 pg',dl:'3.1k',
+   topics:['Lexical Analysis: Regular Expressions, NFAs, DFAs, Lex Tool','Syntax Analysis: CFG, Parse Trees, Ambiguity, LL(1), LR Parsing','Semantic Analysis: Type Checking, Symbol Tables, Scope Rules','Intermediate Code: Three-Address Code, DAG, Quadruples, Triples','Code Optimization & Generation: Peephole, Loop Optimization, Register Allocation'],
+   pdfUrl:'https://www.tutorialspoint.com/compiler_design/compiler_design_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=Qkwj65l_96I'},
+  {sem:'5',title:'Software Engineering',sub:'SDLC, Agile, UML, Testing',type:'notes',icon:'🏗️',bg:'rgba(124,106,255,.18)',pages:'152 pg',dl:'3.4k',
+   topics:['SDLC Models: Waterfall, Spiral, Incremental, RAD, Agile, Scrum, Kanban','Requirements Engineering: Elicitation, SRS Document, Use Cases','Software Design: Architectural, Design Patterns (GOF), UML Diagrams','Testing: Unit, Integration, System, Acceptance, Black/White Box, TDD','Project Management: Estimation (COCOMO), Risk, Configuration Management'],
+   pdfUrl:'https://www.tutorialspoint.com/software_engineering/software_engineering_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=9OIXbofaJcQ'},
+  {sem:'5',title:'Automata Theory & Formal Languages',sub:'FA, PDA, TM, Chomsky Hierarchy',type:'pdf',icon:'🤖',bg:'rgba(255,201,60,.18)',pages:'158 pg',dl:'2.8k',
+   topics:['Finite Automata: DFA, NFA, ε-NFA, Minimization, Equivalence','Regular Languages: Pumping Lemma, Closure Properties, Regular Grammar','Context-Free Languages: CFG, PDA, CYK Algorithm, Pumping Lemma','Turing Machines: Variants, Church-Turing Thesis, Decidability','Complexity Classes: P, NP, NP-Hard, NP-Complete, Reduction'],
+   pdfUrl:'https://www.tutorialspoint.com/automata_theory/automata_theory_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=9syvZr-9xwk'},
+  // SEM 6
+  {sem:'6',title:'Machine Learning',sub:'Supervised, Unsupervised, Deep Learning',type:'pdf',icon:'🧠',bg:'rgba(124,106,255,.18)',pages:'246 pg',dl:'5.4k',
+   topics:['Supervised Learning: Linear/Logistic Regression, SVM, Decision Trees, Random Forest','Unsupervised Learning: K-Means, DBSCAN, PCA, Dimensionality Reduction','Neural Networks: Perceptron, Backpropagation, Activation Functions','Deep Learning: CNN, RNN, LSTM, Transfer Learning, Autoencoders','Model Evaluation: Confusion Matrix, ROC, Cross-Validation, Overfitting/Underfitting'],
+   pdfUrl:'https://www.tutorialspoint.com/machine_learning/machine_learning_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=jGwO_UgTS7I'},
+  {sem:'6',title:'Cryptography & Network Security',sub:'Encryption, PKI, Protocols, Attacks',type:'pdf',icon:'🔐',bg:'rgba(0,224,199,.18)',pages:'188 pg',dl:'3.7k',
+   topics:['Classical Ciphers: Caesar, Vigenere, Playfair, Hill, One-Time Pad','Symmetric Key: DES, Triple-DES, AES, Modes of Operation (ECB, CBC, CTR)','Asymmetric Key: RSA, Diffie-Hellman, ElGamal, ECC','Hash Functions: MD5, SHA Family, HMAC, Digital Signatures','Security Protocols: TLS/SSL, IPSec, PGP, Kerberos, Firewalls, IDS/IPS'],
+   pdfUrl:'https://www.tutorialspoint.com/cryptography_with_python/cryptography_with_python_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=AQDCe585Lnc'},
+  {sem:'6',title:'Cloud Computing',sub:'Virtualization, AWS, Azure, Deployment',type:'notes',icon:'☁️',bg:'rgba(255,107,107,.18)',pages:'142 pg',dl:'3.2k',
+   topics:['Cloud Models: IaaS, PaaS, SaaS, Public/Private/Hybrid Cloud','Virtualization: Hypervisors, Docker, Containers, Kubernetes Basics','AWS Services: EC2, S3, RDS, Lambda, VPC, IAM Overview','Scalability: Load Balancing, Auto Scaling, CDN, Microservices','Cloud Security: Identity Management, Encryption at Rest/Transit, Compliance'],
+   pdfUrl:'https://www.tutorialspoint.com/cloud_computing/cloud_computing_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=M988_fsOSWo'},
+  {sem:'6',title:'Artificial Intelligence',sub:'Search, Knowledge, Planning, NLP',type:'pdf',icon:'🤖',bg:'rgba(255,201,60,.18)',pages:'210 pg',dl:'4.1k',
+   topics:['Search Algorithms: BFS, DFS, A*, Iterative Deepening, Heuristics','Knowledge Representation: Propositional Logic, FOL, Semantic Nets, Frames','Planning: STRIPS, State-Space Planning, Partial-Order Planning','Natural Language Processing: Parsing, Tagging, Sentiment Analysis','Expert Systems, Uncertainty: Bayesian Networks, Fuzzy Logic'],
+   pdfUrl:'https://www.tutorialspoint.com/artificial_intelligence/artificial_intelligence_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=JMUxmLyrhSk'},
+  // SEM 7
+  {sem:'7',title:'Data Science & Big Data Analytics',sub:'Hadoop, Spark, Data Visualization',type:'pdf',icon:'📊',bg:'rgba(0,224,199,.18)',pages:'228 pg',dl:'4.6k',
+   topics:['Big Data: Volume/Velocity/Variety, Hadoop Ecosystem (HDFS, MapReduce, YARN)','Apache Spark: RDDs, DataFrames, Spark SQL, MLlib, Streaming','Data Preprocessing: Cleaning, Transformation, Feature Engineering, SMOTE','Visualization: Matplotlib, Seaborn, Tableau, Power BI Dashboards','NoSQL Databases: MongoDB, Cassandra, HBase, Redis, Use Cases'],
+   pdfUrl:'https://www.tutorialspoint.com/python_data_science/python_data_science_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=KpkQ0zvHeGs'},
+  {sem:'7',title:'Internet of Things',sub:'Sensors, Protocols, Raspberry Pi, Arduino',type:'pdf',icon:'📡',bg:'rgba(124,106,255,.18)',pages:'164 pg',dl:'3.3k',
+   topics:['IoT Architecture: Perception, Network, Middleware, Application Layers','Protocols: MQTT, CoAP, HTTP, AMQP, Zigbee, Z-Wave, LoRa, 6LoWPAN','Platforms: Arduino, Raspberry Pi, ESP32, NodeMCU Programming','IoT Security: Authentication, Encryption, Secure Firmware Updates','Applications: Smart Home, Healthcare, Agriculture, Industry 4.0'],
+   pdfUrl:'https://www.tutorialspoint.com/internet_of_things/internet_of_things_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=h0gWfVCSGQQ'},
+  {sem:'7',title:'Mobile Application Development',sub:'Android, Flutter, React Native',type:'notes',icon:'📱',bg:'rgba(255,201,60,.18)',pages:'182 pg',dl:'3.8k',
+   topics:['Android: Activities, Fragments, Intents, Lifecycle, UI Components','Layouts: ConstraintLayout, RecyclerView, Navigation Component','Flutter: Dart Language, Widgets (Stateless/Stateful), State Management','React Native: JSX, Components, Props/State, Navigation, Expo','Backend Integration: REST APIs, Firebase, SQLite, Push Notifications'],
+   pdfUrl:'https://www.tutorialspoint.com/android/android_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=fis26HvvDII'},
+  {sem:'7',title:'Blockchain Technology',sub:'DLT, Smart Contracts, Ethereum, DApps',type:'pdf',icon:'⛓️',bg:'rgba(255,107,107,.18)',pages:'154 pg',dl:'2.9k',
+   topics:['Blockchain Fundamentals: Distributed Ledger, Blocks, Hash Chaining','Consensus Mechanisms: PoW, PoS, DPoS, PBFT, Raft','Ethereum: EVM, Solidity, Smart Contracts, ABI, Truffle Framework','Cryptocurrencies: Bitcoin Architecture, Wallets, UTXO Model','Applications: DeFi, NFTs, Supply Chain, Healthcare, Voting Systems'],
+   pdfUrl:'https://www.tutorialspoint.com/blockchain/blockchain_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=yubzJw0uiE4'},
+  // SEM 8
+  {sem:'8',title:'Project Work & Research Methodology',sub:'Capstone project, Research writing',type:'notes',icon:'🎓',bg:'rgba(124,106,255,.18)',pages:'88 pg',dl:'2.2k',
+   topics:['Research Methodology: Problem Formulation, Literature Survey, Gap Analysis','Technical Writing: IEEE Paper Format, Abstract, References, Plagiarism','Project Planning: Gantt Chart, WBS, Risk Management, Milestones','Presentation Skills: Conference Paper, Thesis, Viva-Voce Preparation','Publication: Scopus Journals, Conferences, Google Scholar, ResearchGate'],
+   pdfUrl:'https://www.tutorialspoint.com/research_methodology/research_methodology_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  {sem:'8',title:'Professional Ethics & Cyber Law',sub:'IT Act, IPR, Ethics in Computing',type:'notes',icon:'⚖️',bg:'rgba(0,224,199,.18)',pages:'96 pg',dl:'2.0k',
+   topics:['IT Act 2000 & Amendments: Cyber Crimes, Digital Signatures, Data Protection','Intellectual Property Rights: Copyright, Patents, Trademarks, Trade Secrets','Professional Ethics: ACM Code, IEEE Code, Whistleblowing, Privacy','Cyber Security Law: GDPR, PDPB India, CERT-In Guidelines','Case Studies: Cyber Frauds, Social Engineering, Legal Liabilities'],
+   pdfUrl:'https://www.tutorialspoint.com/cyber_security/cyber_security_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=dQw4w9WgXcQ'},
+  {sem:'8',title:'DevOps & Agile Practices',sub:'CI/CD, Docker, Jenkins, Kubernetes',type:'pdf',icon:'🔄',bg:'rgba(255,201,60,.18)',pages:'148 pg',dl:'3.1k',
+   topics:['DevOps Culture: Principles, DevSecOps, Continuous Everything','Git & GitHub: Branching Strategies, Pull Requests, Conflict Resolution','CI/CD: Jenkins Pipelines, GitHub Actions, ArgoCD, GitOps','Containerization: Docker Images, Compose, Multi-Stage Builds','Kubernetes: Pods, Deployments, Services, Ingress, Helm Charts, Monitoring'],
+   pdfUrl:'https://www.tutorialspoint.com/devops/devops_tutorial.pdf',
+   ytUrl:'https://www.youtube.com/watch?v=hQcFE0RD0cQ'},
+];
+
+// YouTube playlists with REAL YouTube links
+const ytVideos = [
+  {title:'DSA Full Course — Apna College',subject:'Data Structures',emoji:'🧮',color:'#1a1a2e',views:'8.2M views',dur:'12 hrs',url:'https://www.youtube.com/watch?v=RBSGKlAvoiM&list=PLfqMhTWNBTe0b2nM6JHVCnAkhQRGiZMSJ'},
+  {title:'DBMS Complete — Gate Smashers',subject:'Database Systems',emoji:'🗄️',color:'#0d1b2a',views:'5.6M views',dur:'8 hrs',url:'https://www.youtube.com/watch?v=kBdlM6hNDAE&list=PLxCzCOWd7aiFAN6I8CuViBuCdJgiOkT2Y'},
+  {title:'Operating Systems — Neso Academy',subject:'Operating Systems',emoji:'⚙️',color:'#1b1b2f',views:'6.1M views',dur:'10 hrs',url:'https://www.youtube.com/watch?v=vBURTt97EkA&list=PLBlnK6fEyqRiVhbXDGLXDk_OQAeuVcp2O'},
+  {title:'Computer Networks — Gate Smashers',subject:'Networks',emoji:'🌍',color:'#0a1628',views:'4.8M views',dur:'9 hrs',url:'https://www.youtube.com/watch?v=JFF2vAaN6Oo&list=PLxCzCOWd7aiGFBD2-2joCpWOLUrDLvVV_'},
+  {title:'C Programming — Jenny\'s Lectures',subject:'C Programming',emoji:'💻',color:'#1a2a1a',views:'7.3M views',dur:'14 hrs',url:'https://www.youtube.com/watch?v=KJgsSFOSQv0&list=PLdo5W4Nhv31a8UcMN9-35ghv8qyFWD9_S'},
+  {title:'Machine Learning — Krish Naik',subject:'Machine Learning',emoji:'🧠',color:'#2a1a1a',views:'9.1M views',dur:'20 hrs',url:'https://www.youtube.com/watch?v=7uwa9aPbBRU&list=PLZoTAELRMXVPBTrWtJkn3wWQxZkmTXGwe'},
+  {title:'Python Full Course — Freecodecamp',subject:'Python',emoji:'🐍',color:'#1a1a2a',views:'11M views',dur:'4 hrs',url:'https://www.youtube.com/watch?v=rfscVS0vtbw'},
+  {title:'Web Dev Bootcamp — Traversy Media',subject:'Web Technologies',emoji:'🌐',color:'#2a1a2a',views:'3.4M views',dur:'11 hrs',url:'https://www.youtube.com/watch?v=ysEN5RaKOlA'},
+  {title:'Algorithms — Abdul Bari',subject:'Algorithms',emoji:'🔍',color:'#1a2a2a',views:'4.2M views',dur:'16 hrs',url:'https://www.youtube.com/watch?v=0IAPZzGSbME&list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O'},
+  {title:'Cloud Computing — Simplilearn',subject:'Cloud & AWS',emoji:'☁️',color:'#0a1a2a',views:'2.9M views',dur:'6 hrs',url:'https://www.youtube.com/watch?v=M988_fsOSWo'},
+  {title:'Java OOP — Telusko',subject:'Java Programming',emoji:'☕',color:'#2a1a0a',views:'6.5M views',dur:'13 hrs',url:'https://www.youtube.com/watch?v=BSVKUk58K6U&list=PLsyeobzWxl7pe_IiTfNyr55kwJPWbgxB5'},
+  {title:'Compiler Design — Ravindrababu Ravula',subject:'Compiler Design',emoji:'🔧',color:'#1a0a2a',views:'2.1M views',dur:'7 hrs',url:'https://www.youtube.com/watch?v=Qkwj65l_96I&list=PLEbnTDJUr_IcPtUXFy2b1sGRPsLFMghhS'},
+];
+
+// Jobs — expanded list
+const jobs = [
+  {title:'Content Writer',company:'EduBlog Media',logo:'✍️',bg:'rgba(124,106,255,.2)',pay:'₹120/hr',tags:['Remote','5-10 hrs/week','Flexible'],loc:'Online · Chennai'},
+  {title:'Data Entry Operator',company:'TechBits Solutions',logo:'⌨️',bg:'rgba(0,224,199,.2)',pay:'₹90/hr',tags:['On-site','Weekend','Part-time'],loc:'Tambaram, Chennai'},
+  {title:'Junior Tutor — Maths',company:'Bright Minds Academy',logo:'📐',bg:'rgba(255,201,60,.2)',pay:'₹150/hr',tags:['Teaching','Evenings','Near Campus'],loc:'Velachery, Chennai'},
+  {title:'Graphic Design Intern',company:'PixelCraft Studio',logo:'🎨',bg:'rgba(255,107,107,.2)',pay:'₹100/hr',tags:['Remote','Creative','Portfolio'],loc:'Online · Flexible'},
+  {title:'Campus Ambassador',company:'GrowthHack Startup',logo:'📣',bg:'rgba(124,106,255,.2)',pay:'₹80/hr + Comm.',tags:['Marketing','On-campus','Social Media'],loc:'Your College'},
+  {title:'Python Dev Intern',company:'CodeBase Pvt Ltd',logo:'🐍',bg:'rgba(0,224,199,.2)',pay:'₹180/hr',tags:['Coding','Remote','Project-based'],loc:'Remote · India'},
+  {title:'Social Media Manager',company:'BrandWave Agency',logo:'📱',bg:'rgba(255,201,60,.2)',pay:'₹110/hr',tags:['Remote','Creative','Flexible'],loc:'Online · Flexible'},
+  {title:'Video Editor',company:'ReelUp Studios',logo:'🎬',bg:'rgba(255,107,107,.2)',pay:'₹130/hr',tags:['Remote','Part-time','Creative'],loc:'Online · Chennai'},
+  {title:'Customer Support Executive',company:'ShopEasy India',logo:'🎧',bg:'rgba(124,106,255,.2)',pay:'₹85/hr',tags:['On-site','Evenings','Weekends'],loc:'Anna Nagar, Chennai'},
+  {title:'Junior Android Developer',company:'AppNova Pvt Ltd',logo:'🤖',bg:'rgba(0,224,199,.2)',pay:'₹200/hr',tags:['Remote','Coding','Project'],loc:'Remote · India'},
+  {title:'Photography Assistant',company:'ClickArt Events',logo:'📷',bg:'rgba(255,201,60,.2)',pay:'₹140/hr',tags:['Weekends','On-site','Events'],loc:'T. Nagar, Chennai'},
+  {title:'Online Survey Analyst',company:'DataPulse Research',logo:'📊',bg:'rgba(255,107,107,.2)',pay:'₹70/hr',tags:['Remote','Flexible','Entry Level'],loc:'Online · Any City'},
+  {title:'React.js Intern',company:'WebForge Labs',logo:'⚛️',bg:'rgba(124,106,255,.2)',pay:'₹190/hr',tags:['Remote','Frontend','6 months'],loc:'Remote · Bengaluru'},
+  {title:'Delivery Partner — Swiggy',company:'Swiggy',logo:'🛵',bg:'rgba(255,201,60,.2)',pay:'₹60/delivery',tags:['Flexible Hours','Near Campus','Earn Daily'],loc:'Nearby Areas'},
+  {title:'English Speaking Tutor',company:'SpokenEdge Academy',logo:'🗣️',bg:'rgba(0,224,199,.2)',pay:'₹160/hr',tags:['Online','Teaching','Afternoons'],loc:'Online · Pan India'},
+  {title:'UI/UX Design Intern',company:'DesignAxis Studio',logo:'🎯',bg:'rgba(124,106,255,.2)',pay:'₹150/hr',tags:['Remote','Figma','Portfolio Build'],loc:'Remote · India'},
+];
+
+// Projects with GitHub links
+const projects = [
+  {title:'Smart Attendance System',icon:'📡',bg:'rgba(124,106,255,.2)',desc:'Face recognition-based attendance using OpenCV and Flask. Real-time faculty dashboard.',tech:['Python','OpenCV','Flask'],author:'Rahul S.',ac:'rgba(124,106,255,.3)',at:'RS',views:'1.2k',sem:'Sem 6',github:'https://github.com/topics/face-recognition-attendance',demo:'https://github.com/topics/face-recognition-attendance'},
+  {title:'Online Voting System',icon:'🗳️',bg:'rgba(0,224,199,.2)',desc:'Blockchain-based secure college voting with OTP verification and live results.',tech:['React','Node.js','MongoDB'],author:'Priya K.',ac:'rgba(0,224,199,.3)',at:'PK',views:'980',sem:'Sem 5',github:'https://github.com/topics/blockchain-voting',demo:'https://github.com/topics/blockchain-voting'},
+  {title:'Campus Food Delivery',icon:'🍱',bg:'rgba(255,201,60,.2)',desc:'Mobile-first canteen ordering system with real-time tracking and UPI payment.',tech:['React Native','Firebase'],author:'Arjun M.',ac:'rgba(255,201,60,.3)',at:'AM',views:'2.3k',sem:'Sem 7',github:'https://github.com/topics/food-delivery-app',demo:'https://github.com/topics/food-delivery-app'},
+  {title:'Library Management System',icon:'📚',bg:'rgba(255,107,107,.2)',desc:'Full-stack book issue, return, fine tracking with admin dashboard and email alerts.',tech:['Java','MySQL','JSP'],author:'Divya R.',ac:'rgba(255,107,107,.3)',at:'DR',views:'760',sem:'Sem 4',github:'https://github.com/topics/library-management-system',demo:'https://github.com/topics/library-management-system'},
+  {title:'Weather Prediction ML',icon:'🌤️',bg:'rgba(124,106,255,.2)',desc:'ML model predicting Chennai weather 7-days ahead with 92% accuracy.',tech:['Python','Scikit-learn','Pandas'],author:'Karthik B.',ac:'rgba(124,106,255,.3)',at:'KB',views:'1.5k',sem:'Sem 6',github:'https://github.com/topics/weather-prediction-machine-learning',demo:'https://github.com/topics/weather-prediction-machine-learning'},
+  {title:'Student Expense Tracker',icon:'💰',bg:'rgba(0,224,199,.2)',desc:'Budget tracking web app with category-wise analytics and monthly reports.',tech:['React','Firebase','Chart.js'],author:'Sneha P.',ac:'rgba(0,224,199,.3)',at:'SP',views:'3.1k',sem:'Sem 5',github:'https://github.com/topics/expense-tracker',demo:'https://github.com/topics/expense-tracker'},
+  {title:'AI Chatbot for College FAQ',icon:'💬',bg:'rgba(255,201,60,.2)',desc:'NLP-based chatbot answering college admission and academic queries automatically.',tech:['Python','NLTK','Flask'],author:'Mohan T.',ac:'rgba(255,201,60,.3)',at:'MT',views:'890',sem:'Sem 6',github:'https://github.com/topics/chatbot-nlp',demo:'https://github.com/topics/chatbot-nlp'},
+  {title:'IoT Smart Parking System',icon:'🚗',bg:'rgba(124,106,255,.2)',desc:'Ultrasonic sensor-based parking slot detection with live web dashboard.',tech:['Arduino','ESP32','MQTT'],author:'Lakshmi V.',ac:'rgba(124,106,255,.3)',at:'LV',views:'640',sem:'Sem 7',github:'https://github.com/topics/iot-parking-system',demo:'https://github.com/topics/iot-parking-system'},
+  {title:'E-Commerce Product Recommender',icon:'🛒',bg:'rgba(255,107,107,.2)',desc:'Collaborative filtering recommendation system integrated with a simple React shop.',tech:['Python','Pandas','React'],author:'Suresh K.',ac:'rgba(255,107,107,.3)',at:'SK',views:'1.1k',sem:'Sem 7',github:'https://github.com/topics/recommendation-system',demo:'https://github.com/topics/recommendation-system'},
+];
+
+// ════════════════════════════════════════════
+// STATE — localStorage for returning user
+// ════════════════════════════════════════════
+let currentUser = null;
+let semFilter = 'all', typeFilter = 'all';
+
+function loadSavedUser(){
+  try{
+    const s = localStorage.getItem('edunest_user');
+    return s ? JSON.parse(s) : null;
+  }catch(e){return null;}
+}
+function saveUser(roll, name){
+  try{localStorage.setItem('edunest_user', JSON.stringify({roll, name}));}catch(e){}
+}
+function clearUser(){
+  try{localStorage.removeItem('edunest_user');}catch(e){}
+}
+
+// ════════════════════════════════════════════
+// LOGIN FLOW
+// ════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = loadSavedUser();
+  if(saved && saved.roll){
+    document.getElementById('returning-roll').textContent = saved.roll;
+    document.getElementById('returning-name').textContent = saved.name || 'Student';
+    document.getElementById('returning-block').style.display = 'block';
+    document.getElementById('new-form').style.display = 'none';
+  }
+  renderResources();
+  renderYT();
+  renderJobs();
+  renderProjects();
+});
+
+function continueSession(){
+  const saved = loadSavedUser();
+  if(saved) enterApp(saved.roll, saved.name);
+}
+
+function showNewForm(){
+  document.getElementById('returning-block').style.display = 'none';
+  document.getElementById('new-form').style.display = 'block';
+}
+
+function doLogin(){
+  const roll = document.getElementById('roll-input').value.trim().toUpperCase();
+  const name = document.getElementById('name-input').value.trim();
+  const err = document.getElementById('login-error');
+  if(!roll || !name){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  saveUser(roll, name);
+  enterApp(roll, name);
+}
+
+function enterApp(roll, name){
+  currentUser = {roll, name};
+  // Fill fields
+  document.getElementById('nav-roll-badge').textContent = roll;
+  document.getElementById('nav-name').textContent = name;
+  document.getElementById('welcome-roll').textContent = roll;
+  document.getElementById('welcome-name').textContent = name;
+  document.getElementById('r-roll').value = roll;
+  document.getElementById('r-name').value = name;
+  document.getElementById('j-roll').value = roll;
+  document.getElementById('j-name').value = name;
+
+  const ls = document.getElementById('login-screen');
+  ls.style.transition = 'opacity .5s ease';
+  ls.style.opacity = '0';
+  setTimeout(()=>{
+    ls.style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    if(!chartsReady){ chartsReady=true; initCharts(); }
+  }, 500);
+}
+
+function doLogout(){
+  clearUser();
+  currentUser = null;
+  document.getElementById('login-screen').style.opacity = '1';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('returning-block').style.display = 'none';
+  document.getElementById('new-form').style.display = 'block';
+  document.getElementById('roll-input').value = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('app').classList.remove('visible');
+}
+
+// ════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════
+const tabIds = ['home','resources','recycling','jobs','feedback','projects'];
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function switchTabByIndex(i){
+  const btns = document.querySelectorAll('.tab-btn');
+  switchTab(tabIds[i], btns[i]);
+}
+
+// ════════════════════════════════════════════
+// RENDER RESOURCES
+// ════════════════════════════════════════════
+function renderResources(){
+  const list = subjects.filter(s=>{
+    const semOk = semFilter==='all' || s.sem===semFilter;
+    const typeOk = typeFilter==='all' || s.type===typeFilter;
+    return semOk && typeOk;
+  });
+  document.getElementById('resources-grid').innerHTML = list.map((s,i)=>`
+    <div class="resource-card" onclick="openSubjectModal(${subjects.indexOf(s)})">
+      <div class="resource-card-header">
+        <span class="resource-type type-${s.type}">${s.type.toUpperCase()}</span>
+        <div class="resource-icon" style="background:${s.bg}">${s.icon}</div>
+      </div>
+      <div>
+        <div class="resource-title">${s.title}</div>
+        <div class="resource-sub">${s.sub}</div>
+      </div>
+      <div class="resource-meta"><span>📄 ${s.pages}</span><span>⬇️ ${s.dl} downloads</span></div>
+      <div class="resource-footer">
+        <span class="resource-sem">Sem ${s.sem}</span>
+        <div class="resource-actions">
+          <a href="${s.ytUrl}" target="_blank" rel="noopener" class="resource-btn view" onclick="event.stopPropagation()">▶ Watch</a>
+          <a href="${s.pdfUrl}" target="_blank" rel="noopener" class="resource-btn dl" onclick="event.stopPropagation()">⬇ PDF</a>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function filterSem(s, btn){
+  document.querySelectorAll('.sem-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  semFilter = s; renderResources();
+}
+function filterType(t, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  typeFilter = t; renderResources();
+}
+
+// ════════════════════════════════════════════
+// RENDER YOUTUBE
+// ════════════════════════════════════════════
+function renderYT(){
+  document.getElementById('yt-grid').innerHTML = ytVideos.map(v=>`
+    <a class="yt-card" href="${v.url}" target="_blank" rel="noopener">
+      <div class="yt-thumb" style="background:linear-gradient(135deg,${v.color},#0d0d1a)">
+        <div class="yt-thumb-bg">${v.emoji}</div>
+        <div class="yt-play">▶</div>
+      </div>
+      <div class="yt-info">
+        <div class="yt-label">YouTube</div>
+        <div class="yt-title">${v.title}</div>
+        <div class="yt-meta"><span>📌 ${v.subject}</span><span>👁 ${v.views}</span><span>⏱ ${v.dur}</span></div>
+      </div>
+    </a>`).join('');
+}
+
+// ════════════════════════════════════════════
+// RENDER JOBS
+// ════════════════════════════════════════════
+function renderJobs(){
+  document.getElementById('jobs-list').innerHTML = jobs.map(j=>`
+    <div class="job-card">
+      <div class="job-card-top">
+        <div class="job-company"><div class="job-logo" style="background:${j.bg}">${j.logo}</div><div><div class="job-title">${j.title}</div><div class="job-company-name">${j.company}</div></div></div>
+        <div><div class="job-pay">${j.pay}</div><div class="job-pay-sub">per hour</div></div>
+      </div>
+      <div class="job-tags">${j.tags.map(t=>`<span class="job-tag">${t}</span>`).join('')}</div>
+      <div class="job-footer"><div class="job-location">📍 ${j.loc}</div>
+        <button class="job-apply" onclick="applyJob('${j.title}','${j.company}')">Apply Now</button>
+      </div>
+    </div>`).join('');
+}
+function applyJob(title, company){
+  showToast('💼','Application Sent!',`Applied for ${title} at ${company}`);
+}
+
+// ════════════════════════════════════════════
+// RENDER PROJECTS
+// ════════════════════════════════════════════
+function renderProjects(){
+  document.getElementById('projects-grid').innerHTML = projects.map((p,i)=>`
+    <div class="project-card">
+      <div class="project-header"><div class="project-icon" style="background:${p.bg}">${p.icon}</div><div class="project-views">👁 ${p.views}</div></div>
+      <div class="project-title">${p.title}</div>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-tech">${p.tech.map(t=>`<span class="project-tech-tag">${t}</span>`).join('')}</div>
+      <div class="project-footer">
+        <div class="project-author"><div class="project-avatar" style="background:${p.ac}">${p.at}</div><span>${p.author} · ${p.sem}</span></div>
+        <div class="project-actions">
+          <a href="${p.github}" target="_blank" rel="noopener" class="project-btn view-btn">👁 View</a>
+          <a href="${p.github}" target="_blank" rel="noopener" class="project-btn dl-btn">⬇ GitHub</a>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+// SUBJECT MODAL
+// ════════════════════════════════════════════
+function openSubjectModal(idx){
+  const s = subjects[idx];
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-tag">Sem ${s.sem} · ${s.type.toUpperCase()}</div>
+    <div class="modal-title">${s.icon} ${s.title}</div>
+    <div class="modal-meta">
+      <span>📄 ${s.pages}</span><span>⬇️ ${s.dl} downloads</span><span>📚 ${s.sub}</span>
+    </div>
+    <div class="modal-section-head">📋 Topics Covered</div>
+    ${s.topics.map(t=>`<div class="modal-topic">• ${t}</div>`).join('')}
+    <div class="modal-actions">
+      <a href="${s.ytUrl}" target="_blank" rel="noopener" class="modal-btn primary" style="text-decoration:none;text-align:center;display:block;">▶ Watch on YouTube</a>
+      <a href="${s.pdfUrl}" target="_blank" rel="noopener" class="modal-btn secondary" style="text-decoration:none;text-align:center;display:block;">⬇ Download PDF</a>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeModalOnBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+// ════════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════════
+let chartsReady = false;
+let dailyData = [45,62,38,78,91,55,0];
+const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
+
+function initCharts(){
+  const rCtx = document.getElementById('recycleChart').getContext('2d');
+  const grad = rCtx.createLinearGradient(0,0,0,220);
+  grad.addColorStop(0,'rgba(0,224,199,.38)');
+  grad.addColorStop(0.5,'rgba(0,224,199,.10)');
+  grad.addColorStop(1,'rgba(0,224,199,0)');
+  window.recycleChart = new Chart(rCtx,{
+    type:'line',
+    data:{labels:days,datasets:[{
+      label:'kg recycled',data:dailyData,
+      borderColor:'#00e0c7',borderWidth:2.5,
+      pointBackgroundColor:'#00e0c7',pointBorderColor:'#09090f',pointBorderWidth:2,
+      pointRadius:5,pointHoverRadius:7,tension:0.45,fill:true,backgroundColor:grad
+    }]},
+    options:{
+      responsive:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(17,17,24,.95)',borderColor:'rgba(0,224,199,.25)',borderWidth:1,titleColor:'#f0eff8',bodyColor:'#7a7990',padding:12,callbacks:{label:c=>`  ${c.raw} kg recycled`}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7990',font:{family:'DM Sans',size:11}}},
+        y:{beginAtZero:true,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#7a7990',font:{family:'DM Sans',size:11}},title:{display:true,text:'kg',color:'#7a7990'}}
+      }
+    }
+  });
+  const fCtx = document.getElementById('feedbackChart').getContext('2d');
+  new Chart(fCtx,{
+    type:'line',
+    data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul'],datasets:[
+      {label:'Clarity',data:[3.8,3.9,4.0,4.1,4.2,4.2,4.3],borderColor:'#ff6b6b',tension:.4,fill:false,pointRadius:3,pointHoverRadius:5},
+      {label:'Engagement',data:[3.2,3.4,3.5,3.6,3.7,3.8,3.8],borderColor:'#ffc93c',tension:.4,fill:false,pointRadius:3,pointHoverRadius:5},
+    ]},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#7a7990',font:{family:'DM Sans',size:11}}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7990',font:{family:'DM Sans'}}},y:{min:2.5,max:5,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7990',font:{family:'DM Sans'}}}}}
+  });
+}
+
+// ════════════════════════════════════════════
+// INTERACTIONS
+// ════════════════════════════════════════════
+function updatePoints(){
+  const kg = parseFloat(document.getElementById('r-kg').value)||0;
+  document.getElementById('pts-preview').textContent = Math.round(kg*10)+' pts';
+}
+let todayKg=0, todayPts=0;
+function submitRecycling(){
+  const kg = parseFloat(document.getElementById('r-kg').value)||0;
+  if(kg<=0){showToast('⚠️','Missing Weight','Please enter a valid weight in kg.');return;}
+  todayKg+=kg; todayPts+=Math.round(kg*10);
+  dailyData[6] = todayKg;
+  document.getElementById('total-kg').textContent = todayKg.toFixed(1)+' kg';
+  document.getElementById('total-pts').textContent = todayPts;
+  window.recycleChart.data.datasets[0].data = [...dailyData];
+  window.recycleChart.update();
+  showToast('♻️','Logged!',`${kg} kg added — You earned ${Math.round(kg*10)} points!`);
+  document.getElementById('r-kg').value='';
+  document.getElementById('pts-preview').textContent='0 pts';
+}
+function submitJobReg(){
+  const e = document.getElementById('j-email').value.trim();
+  const p = document.getElementById('j-phone').value.trim();
+  if(!e||!p){showToast('⚠️','Incomplete','Please add your email and phone number.');return;}
+  showToast('💼','Profile Updated!',`Job matches will be sent to ${e}`);
+}
+const ratings={clarity:0,engagement:0};
+function setRating(t,v){ratings[t]=v;document.getElementById('stars-'+t).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<v));}
+function submitFeedback(){
+  if(!ratings.clarity||!ratings.engagement){showToast('⚠️','Incomplete','Please rate Teaching Clarity and Engagement.');return;}
+  showToast('⭐','Feedback Submitted!','Recorded anonymously. Thank you!');
+  ratings.clarity=0;ratings.engagement=0;
+  ['clarity','engagement'].forEach(t=>document.getElementById('stars-'+t).querySelectorAll('.star').forEach(s=>s.classList.remove('active')));
+}
+function submitProject(){
+  const t = document.getElementById('p-title').value.trim();
+  if(!t){showToast('⚠️','Missing Title','Please enter your project title.');return;}
+  showToast('🚀','Uploaded!',`"${t}" is now live in the repository!`);
+  document.getElementById('p-title').value='';
+  document.getElementById('p-github').value='';
+}
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+let toastTimer;
+function showToast(icon,title,sub){
+  clearTimeout(toastTimer);
+  document.getElementById('toast-icon').textContent=icon;
+  document.getElementById('toast-title').textContent=title;
+  document.getElementById('toast-sub').textContent=sub;
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
